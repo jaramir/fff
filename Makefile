@@ -1,4 +1,5 @@
-NODE_BIN = node_modules/.bin
+NODE_MODULES = node_modules
+NODE_BIN = $(NODE_MODULES)/.bin
 SERVER = $(NODE_BIN)/static
 CACHE = 0
 PORT = 9000
@@ -9,27 +10,28 @@ MOCHA_REPORTER = list
 BOWER = $(NODE_BIN)/bower
 JS_LIBS = docroot/libs
 
-run: node_modules $(JS_LIBS)
+SHELL = /bin/bash
+
+run: $(NODE_MODULES) $(JS_LIBS)
 	$(SERVER) -p $(PORT) -c $(CACHE) docroot
 
-test: node_modules
+test: $(NODE_MODULES)
 	$(MOCHA) --reporter $(MOCHA_REPORTER)
 
-watch: node_modules
+watch: $(NODE_MODULES)
 	$(MOCHA) --watch --reporter $(MOCHA_REPORTER)
 
-install: node_modules $(JS_LIBS)
+install: $(NODE_MODULES) $(JS_LIBS)
 
-node_modules: package.json
+$(NODE_MODULES): package.json
 	npm install
 
-$(JS_LIBS): bower
-
-bower: node_modules
+$(JS_LIBS): component.json $(NODE_MODULES)
 	$(BOWER) install
 
 clean:
-	rm -r node_modules
+	[ -d node_modules ] && rm -r node_modules || true
+	[ -d $(JS_LIBS) ] && rm -r $(JS_LIBS) || true
 	find -name "*~" -delete
 
 .PHONY: run test install clean
