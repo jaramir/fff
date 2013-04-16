@@ -14,7 +14,6 @@ TODO
 
 * browser tests
 * less
-* https
 
 DIRECTORY STRUCTURE
 -------------------
@@ -37,7 +36,7 @@ COMMANDS
 run server
 
     make
-    
+
 run the test once
 
     make test
