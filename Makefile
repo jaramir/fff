@@ -1,8 +1,7 @@
 NODE_MODULES = node_modules
 NODE_BIN = $(NODE_MODULES)/.bin
-SERVER = $(NODE_BIN)/static
-CACHE = 0
-PORT = 9000
+SERVER = ./server.js
+PORT = 9003
 
 MOCHA = $(NODE_BIN)/mocha
 MOCHA_REPORTER = list
@@ -12,8 +11,14 @@ JS_LIBS = docroot/libs
 
 SHELL = /bin/bash
 
-run: $(NODE_MODULES) $(JS_LIBS)
-	$(SERVER) -p $(PORT) -c $(CACHE) docroot
+run: $(NODE_MODULES) $(JS_LIBS) cert.pem
+	$(SERVER) docroot $(PORT)
+
+cert.pem:
+	openssl genrsa -out key.pem
+	openssl req -new -key key.pem -out csr.pem
+	openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out cert.pem
+	rm csr.pem
 
 test: $(NODE_MODULES)
 	$(MOCHA) --reporter $(MOCHA_REPORTER)
